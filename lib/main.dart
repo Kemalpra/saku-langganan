@@ -2038,15 +2038,15 @@ class HalamanTentangAplikasi extends StatelessWidget {
   const HalamanTentangAplikasi({super.key});
 
   Future<void> _downloadApk() async {
-    final Uri url = Uri.parse(
-      'https://nama-app-kamu.vercel.app/downloads/app-release.apk', // ganti link ini
-    );
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      debugPrint('Gagal membuka link download APK');
-    }
+  final Uri url = Uri.parse(
+    'https://saku-langganan.vercel.app/downloads/saku-langganan.apk',
+  );
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    debugPrint('Gagal membuka link download APK');
   }
+}
 
   Widget _buildFiturItem(IconData icon, String judul, String deskripsi) {
     return Padding(
