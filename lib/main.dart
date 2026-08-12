@@ -908,13 +908,7 @@ class _HalamanBerandaState extends State<HalamanBeranda>
     if (hasil == null) return;
 
     if (hasil is Map<String, dynamic>) {
-      if (index != null) {
-        final lama = daftarLangganan[index];
-        await NotificationService().batalkanPengingat(
-          lama['nama'],
-          lama['tanggalJatuhTempo'],
-        );
-      }
+      final lama = index != null ? daftarLangganan[index] : null;
 
       setState(() {
         if (index != null) {
@@ -925,23 +919,41 @@ class _HalamanBerandaState extends State<HalamanBeranda>
         _urutkanDanSimpan();
       });
 
-      if (hasil['ingatkan'] == true) {
-        await NotificationService().jadwalkanPengingat(
-          nama: hasil['nama'],
-          harga: hasil['harga'],
-          tanggalJatuhTempo: hasil['tanggalJatuhTempo'],
-        );
+      // Urusan notifikasi dibungkus try-catch,
+      // biar kalau gagal (izin, exact alarm, dll) TIDAK menghentikan alur simpan data
+      try {
+        if (lama != null) {
+          await NotificationService().batalkanPengingat(
+            lama['nama'],
+            lama['tanggalJatuhTempo'],
+          );
+        }
+        if (hasil['ingatkan'] == true) {
+          await NotificationService().jadwalkanPengingat(
+            nama: hasil['nama'],
+            harga: hasil['harga'],
+            tanggalJatuhTempo: hasil['tanggalJatuhTempo'],
+          );
+        }
+      } catch (e) {
+        debugPrint('Gagal atur notifikasi (simpan/edit): $e');
       }
     } else if (hasil == 'hapus' && index != null) {
       final item = daftarLangganan[index];
-      await NotificationService().batalkanPengingat(
-        item['nama'],
-        item['tanggalJatuhTempo'],
-      );
+
       setState(() {
         daftarLangganan.removeAt(index);
         _simpanData();
       });
+
+      try {
+        await NotificationService().batalkanPengingat(
+          item['nama'],
+          item['tanggalJatuhTempo'],
+        );
+      } catch (e) {
+        debugPrint('Gagal batalkan notifikasi (hapus): $e');
+      }
     }
   }
 
@@ -2038,15 +2050,15 @@ class HalamanTentangAplikasi extends StatelessWidget {
   const HalamanTentangAplikasi({super.key});
 
   Future<void> _downloadApk() async {
-  final Uri url = Uri.parse(
-    'https://saku-langganan.vercel.app/downloads/saku-langganan.apk',
-  );
-  if (await canLaunchUrl(url)) {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  } else {
-    debugPrint('Gagal membuka link download APK');
+    final Uri url = Uri.parse(
+      'https://saku-langganan.vercel.app/downloads/saku-langganan.apk',
+    );
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('Gagal membuka link download APK');
+    }
   }
-}
 
   Widget _buildFiturItem(IconData icon, String judul, String deskripsi) {
     return Padding(
