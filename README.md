@@ -131,7 +131,7 @@ Didistribusikan di bawah lisensi MIT. Lihat `LICENSE` untuk info lebih lanjut.
 
 ## 👤 Kontak
 
-Dibuat oleh **[Kemal Pramayuda]**
+Dibuat oleh **Kemal Pramayuda**
 - Demo: [saku-langganan.vercel.app](https://saku-langganan.vercel.app)
 
 ---
